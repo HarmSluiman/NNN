@@ -4,17 +4,17 @@ public class Test {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		Bouton bouton = new Bouton();
+		Axon axon = new Axon();
 		System.out.println("first stimualtion");
-		bouton.stimulate(10);
+		axon.stimulate(1);
 		try {
-			Thread.sleep(10);
+			Thread.sleep(100);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		System.out.println("second stimualtion");
-		bouton.stimulate(10);
+		axon.stimulate(0.5);
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
@@ -22,7 +22,7 @@ public class Test {
 			e.printStackTrace();
 		}
 		System.out.println("third stimualtion");
-		bouton.stimulate(10);
+		axon.stimulate(1);
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
@@ -30,7 +30,7 @@ public class Test {
 			e.printStackTrace();
 		}
 		System.out.println("atrophy");
-		bouton.atrophy();
+		axon.atrophy();
 	}
 
 }
