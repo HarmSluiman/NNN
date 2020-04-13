@@ -52,6 +52,12 @@ public class Bouton {
 		}
 
 	};
+	
+	private void attractDendrites() {
+		// large potential held over time indicates no synapse firing so a Dendrite will be attracted
+		// it will take time for a dendrite to grow
+		
+	}
 
 	/**
 	 * decayPotential - decay the signal pushed on the Synapse. Runs on a thread
