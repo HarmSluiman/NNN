@@ -1,6 +1,7 @@
 package nnn.nerve;
 
 import nnn.space.Location;
+import nnn.space.Space;
 
 public class Test {
 
@@ -14,7 +15,6 @@ public class Test {
 			Thread.sleep(10);
 			System.out.println("sleeping 10");
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.out.println(e.getStackTrace());
 		}
@@ -25,7 +25,6 @@ public class Test {
 			Thread.sleep(5);
 			System.out.println("sleeping 5");
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.out.println(e.getStackTrace());
 		}
@@ -36,12 +35,12 @@ public class Test {
 			Thread.sleep(15);
 			System.out.println("sleeping 5");
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.out.println(e.getStackTrace());
 		}
 		System.out.println("atrophy");
 		nerve.atrophy();
+		Space.dumpLocations();
 	}
 
 }

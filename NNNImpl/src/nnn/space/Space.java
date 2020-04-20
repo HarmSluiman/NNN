@@ -35,5 +35,14 @@ public class Space {
 	public static void addLocation(Location location, Object object) {
 		space.put(location, object);
 	}
+	
+	public static void dumpLocations() {
+		
+		for (Location l : space.keySet()) {
+			System.out.println("Location: "+  l);
+		}
+		
+	}
+	
 
 }

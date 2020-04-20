@@ -38,5 +38,9 @@ public class Location {
 		setY_axis(y);
 		setZ_axis(z);
 	}
+	public String toString() {
+		return " "+getX_axis()+" "+getY_axis()+" "+getY_axis();
+		
+	}
 
 }

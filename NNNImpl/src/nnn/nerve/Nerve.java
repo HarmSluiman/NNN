@@ -80,7 +80,7 @@ public class Nerve {
 		this.terminalRootLocation = terminalRoot;
 			
 			
-		//Space.addLocation(dendriteRoot, dendrites);
+		Space.addLocation(dendriteRoot, dendrites);
 		this.dendrites.add(new Dendrite(dendriteRoot));
 		this.axon = new Axon(terminalRoot);
 		this.propagate();

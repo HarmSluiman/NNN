@@ -1,6 +1,7 @@
 package nnn.nerve;
 
 import java.util.ArrayList;
+import nnn.space.Space;
 
 import nnn.space.Location;
 /**
@@ -28,11 +29,11 @@ public class Axon {
 
 	private Location terminalRoot;
 
-	public Axon(Location terminalRootEnd) {
+	public Axon(Location location) {
 		
-		this.terminalRoot = terminalRootEnd;
-	
-		this.getTerminals().add( new Terminal(terminalRootEnd));
+		this.terminalRoot = location;
+		Space.addLocation(location,this.getTerminals());
+		this.getTerminals().add( new Terminal(location));
 
 	}
 
