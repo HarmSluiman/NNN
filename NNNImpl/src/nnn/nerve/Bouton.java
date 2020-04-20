@@ -1,14 +1,19 @@
 package nnn.nerve;
 
+import nnn.space.Location;
+
 public class Bouton {
 
 	private double potential = 0;
+	private Location myLocation;
+	private boolean dead = false;
 	private Thread decayThread = new Thread(() -> {
 		decayPotential(this);
 	});
 
-	public Bouton() {
-		decay();
+	public Bouton(Location location) {
+		this.myLocation = location;
+		this.decay();
 	}
 
 	public void stimulate(double signal) {
@@ -33,7 +38,7 @@ public class Bouton {
 	 * By setting the potential to > zero the tread ends.
 	 */
 	public void atrophy() {
-		stimulate(getPotential() - 1 - getPotential());
+		dead = true;
 	}
 
 	/**
@@ -52,11 +57,12 @@ public class Bouton {
 		}
 
 	};
-	
+
 	private void attractDendrites() {
-		// large potential held over time indicates no synapse firing so a Dendrite will be attracted
+		// large potential held over time indicates no synapse firing so a Dendrite will
+		// be attracted
 		// it will take time for a dendrite to grow
-		
+
 	}
 
 	/**
@@ -75,13 +81,14 @@ public class Bouton {
 	 */
 
 	private void decayPotential(Bouton bouton) {
-		while (bouton.getPotential() >= 0) {
+		while (bouton.dead == false) {
 
-			while (bouton.getPotential() > .01) {
+			while (bouton.getPotential() > .1) {
 
 				try {
-					Thread.sleep(10);
+					Thread.sleep(2);
 				} catch (InterruptedException ex) {
+					System.out.println(ex.getStackTrace());
 					Thread.currentThread().interrupt();
 				}
 
@@ -90,8 +97,9 @@ public class Bouton {
 
 			}
 			try {
-				Thread.sleep(10);
+				Thread.sleep(5);
 			} catch (InterruptedException ex) {
+				System.out.println(ex.getStackTrace());
 				Thread.currentThread().interrupt();
 			}
 

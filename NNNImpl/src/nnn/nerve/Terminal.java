@@ -1,11 +1,18 @@
 package nnn.nerve;
 
+import java.util.ArrayList;
+
+import nnn.space.Location;
+
 public class Terminal {
 
-	private Bouton[] boutons = {new Bouton()};
+	private ArrayList<Bouton> boutons = new ArrayList<Bouton>();
+	private Location myLocation;
 
-	public Terminal() {
-		//boutons[0] = new Bouton();
+	
+	public Terminal(Location location) {
+		this.myLocation = location;
+		this.boutons.add(new Bouton(location));
 	}
 
 	/**
@@ -17,9 +24,9 @@ public class Terminal {
 	 */
 	public void stimulate(double signal) {
 
-		for (int j = 0; j < boutons.length; j++) {
+		for (int j = 0; j < boutons.size(); j++) {
 
-			boutons[j].stimulate(signal / boutons.length);
+			boutons.get(j).stimulate(signal / boutons.size());
 
 		}
 
@@ -32,9 +39,9 @@ public class Terminal {
 	 */
 	public void atrophy() {
 		
-		for (int j = 0; j < boutons.length; j++) {
+		for (int j = 0; j < boutons.size(); j++) {
 
-			boutons[j].atrophy();
+			boutons.get(j).atrophy();
 
 		}
 		

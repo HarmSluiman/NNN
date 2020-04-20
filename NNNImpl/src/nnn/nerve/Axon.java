@@ -1,5 +1,8 @@
 package nnn.nerve;
 
+import java.util.ArrayList;
+
+import nnn.space.Location;
 /**
  * 
  * @author harmsluiman
@@ -13,10 +16,23 @@ package nnn.nerve;
 
 public class Axon {
 
-	private Terminal[] terminals = {new Terminal()};
+	private ArrayList<Terminal> terminals = new ArrayList<Terminal>();
+	
+	public ArrayList<Terminal> getTerminals() {
+		return terminals;
+	}
 
-	public Axon() {
-		//terminals[0] = new Terminal();
+	public void setTerminals(ArrayList<Terminal> terminals) {
+		this.terminals = terminals;
+	}
+
+	private Location terminalRoot;
+
+	public Axon(Location terminalRootEnd) {
+		
+		this.terminalRoot = terminalRootEnd;
+	
+		this.getTerminals().add( new Terminal(terminalRootEnd));
 
 	}
 
@@ -28,10 +44,11 @@ public class Axon {
 	 * @param signal
 	 */
 	public void stimulate(double signal) {
+		// wait for the impact of the axon length and then propagate
+		// TODO add length delay and some degradation
+		for (int j = 0; j < getTerminals().size(); j++) {
 
-		for (int j = 0; j < terminals.length; j++) {
-
-			terminals[j].stimulate(signal / terminals.length);
+			getTerminals().get(j).stimulate(signal / terminals.size());
 
 		}
 
@@ -47,9 +64,9 @@ public class Axon {
 	 */
 	public void atrophy() {
 
-		for (int j = 0; j < terminals.length; j++) {
+		for (int j = 0; j < getTerminals().size(); j++) {
 
-			terminals[j].atrophy();
+			getTerminals().get(j).atrophy();
 
 		}
 	}

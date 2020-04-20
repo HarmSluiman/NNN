@@ -1,36 +1,47 @@
 package nnn.nerve;
 
+import nnn.space.Location;
+
 public class Test {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		Axon axon = new Axon();
-		System.out.println("first stimualtion");
-		axon.stimulate(1);
+		System.out.println("starting");
+		Nerve nerve = new Nerve (new Location(10,10,10), new Location(20,20,20));
+		System.out.println("first stimulation");
+		nerve.getDendrites().get(0).stimulate(1);
+
 		try {
-			Thread.sleep(100);
+			Thread.sleep(10);
+			System.out.println("sleeping 10");
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.out.println(e.getStackTrace());
 		}
-		System.out.println("second stimualtion");
-		axon.stimulate(0.5);
+		System.out.println("second stimulation");
+		nerve.getDendrites().get(0).stimulate(0.5);
+	
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(5);
+			System.out.println("sleeping 5");
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.out.println(e.getStackTrace());
 		}
-		System.out.println("third stimualtion");
-		axon.stimulate(1);
+		System.out.println("third stimulation");
+		nerve.getDendrites().get(0).stimulate(1);
+		
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(15);
+			System.out.println("sleeping 5");
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.out.println(e.getStackTrace());
 		}
 		System.out.println("atrophy");
-		axon.atrophy();
+		nerve.atrophy();
 	}
 
 }
