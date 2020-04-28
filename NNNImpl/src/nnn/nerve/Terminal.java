@@ -7,12 +7,39 @@ import nnn.space.Location;
 public class Terminal {
 
 	private ArrayList<Bouton> boutons = new ArrayList<Bouton>();
+	private Axon axon = null;
 	private Location myLocation;
+	
 
 	
-	public Terminal(Location location) {
-		this.myLocation = location;
-		this.boutons.add(new Bouton(location));
+	public ArrayList<Bouton> getBoutons() {
+		return boutons;
+	}
+
+	public void setBoutons(ArrayList<Bouton> boutons) {
+		this.boutons = boutons;
+	}
+
+	public Axon getAxon() {
+		return axon;
+	}
+
+	public void setAxon(Axon axon) {
+		this.axon = axon;
+	}
+
+	public Location getMyLocation() {
+		return myLocation;
+	}
+
+	public void setMyLocation(Location myLocation) {
+		this.myLocation = myLocation;
+	}
+
+	public Terminal(Axon owner, Location location) {
+		this.setAxon(owner);
+		this.setMyLocation(location);
+		this.getBoutons().add(new Bouton(this, location));
 	}
 
 	/**
@@ -24,9 +51,9 @@ public class Terminal {
 	 */
 	public void stimulate(double signal) {
 
-		for (int j = 0; j < boutons.size(); j++) {
+		for (int j = 0; j < getBoutons().size(); j++) {
 
-			boutons.get(j).stimulate(signal / boutons.size());
+			getBoutons().get(j).stimulate(signal / boutons.size());
 
 		}
 
@@ -39,9 +66,9 @@ public class Terminal {
 	 */
 	public void atrophy() {
 		
-		for (int j = 0; j < boutons.size(); j++) {
+		for (int j = 0; j < getBoutons().size(); j++) {
 
-			boutons.get(j).atrophy();
+			getBoutons().get(j).atrophy();
 
 		}
 		

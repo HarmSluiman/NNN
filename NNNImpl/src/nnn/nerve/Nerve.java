@@ -1,5 +1,7 @@
 package nnn.nerve;
 
+import nnn.utility.*;
+
 import java.util.ArrayList;
 
 import nnn.space.Location;
@@ -13,12 +15,10 @@ public class Nerve {
 		propagateSignal(this);
 	});
 
-	private ArrayList<Dendrite> dendrites =  new ArrayList<Dendrite>() ;
+	private ArrayList<Dendrite> dendrites = new ArrayList<Dendrite>();
 	private Axon axon;
 	private Location dendriteRootLocation;
 	private Location terminalRootLocation;
-
-
 
 	public boolean isDead() {
 		return dead;
@@ -39,7 +39,6 @@ public class Nerve {
 	public Thread getSignalThread() {
 		return signalThread;
 	}
-
 
 	public ArrayList<Dendrite> getDendrites() {
 		return dendrites;
@@ -73,20 +72,25 @@ public class Nerve {
 		this.terminalRootLocation = terminalRootLocation;
 	}
 
-
-
 	public Nerve(Location dendriteRoot, Location terminalRoot) {
-		this.dendriteRootLocation = dendriteRoot;
-		this.terminalRootLocation = terminalRoot;
-			
-			
-		Space.addLocation(dendriteRoot, dendrites);
-		this.dendrites.add(new Dendrite(dendriteRoot));
-		this.axon = new Axon(terminalRoot);
+		Dendrite dendrite = new Dendrite(dendriteRoot);
+		this.getDendrites().add(dendrite);
+
+		this.setAxon(new Axon(this, terminalRoot));
+		// Terminal terminal = new Terminal(this.getAxon(), terminalRoot);
+
+		this.setDendriteRootLocation(dendriteRoot);
+		this.setTerminalRootLocation(terminalRoot);
+
+		this.getDendriteRootLocation().setOccupant(dendrite);
+		// this.getTerminalRootLocation().setOccupant(terminal);
+
+		Space.addLocation(dendriteRoot);
+		Space.addLocation(terminalRoot);
 		this.propagate();
-		
+
 	}
-	
+
 	private void propagate() {
 		if (!signalThread.isAlive()) {
 			signalThread.start();
@@ -104,7 +108,7 @@ public class Nerve {
 
 		while (nerve.isDead() == false) {
 			try {
-				Thread.sleep(5);
+				Thread.sleep(Configuration.nervePropagationDelay);
 			} catch (InterruptedException ex) {
 				Thread.currentThread().interrupt();
 			}
@@ -112,10 +116,9 @@ public class Nerve {
 			for (int j = 0; j < nerve.dendrites.size(); j++) {
 
 				currentPotential = currentPotential + nerve.dendrites.get(j).getSignal();
-				
 
 			}
-			System.out.println("Accumulated Signal is = " + currentPotential);
+			// Logger.log(Thread.currentThread() + " " + this + " Accumulated Signal is = " + currentPotential);
 			// propagate the signal via the Axon
 			nerve.axon.stimulate(currentPotential);
 			currentPotential = 0;
@@ -124,7 +127,7 @@ public class Nerve {
 	}
 
 	public void atrophy() {
-		
+
 		getAxon().atrophy();
 		setDead(true);
 	}

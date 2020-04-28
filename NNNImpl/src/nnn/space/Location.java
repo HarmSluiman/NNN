@@ -1,5 +1,7 @@
 package nnn.space;
 
+import nnn.utility.Logger;
+
 /**
  * Location is a point in 3 dimensional space.
  * <p>
@@ -13,6 +15,8 @@ public class Location {
 	private int x_axis = 0;
 	private int y_axis = 0;
 	private int z_axis = 0;
+	
+	private Object occupant = null;
 	
 	public int getX_axis() {
 		return x_axis;
@@ -32,6 +36,13 @@ public class Location {
 	public void setZ_axis(int z_axis) {
 		this.z_axis = z_axis;
 	}
+	public Object getOccupant() {
+		return occupant;
+	}
+	public void setOccupant(Object occupant) {
+		this.occupant = occupant;
+	}
+	
 	
 	public Location(int x, int y, int z ) {
 		setX_axis(x);
@@ -39,7 +50,7 @@ public class Location {
 		setZ_axis(z);
 	}
 	public String toString() {
-		return " "+getX_axis()+" "+getY_axis()+" "+getY_axis();
+		return " X:"+getX_axis()+" Y:"+getY_axis()+" Z:"+getZ_axis();
 		
 	}
 

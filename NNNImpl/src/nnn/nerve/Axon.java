@@ -18,7 +18,25 @@ import nnn.space.Location;
 public class Axon {
 
 	private ArrayList<Terminal> terminals = new ArrayList<Terminal>();
+	private Nerve nerve = null;
+	private Location terminalRoot = null;
 	
+	public Nerve getNerve() {
+		return nerve;
+	}
+
+	public void setNerve(Nerve nerve) {
+		this.nerve = nerve;
+	}
+
+	public Location getTerminalRoot() {
+		return terminalRoot;
+	}
+
+	public void setTerminalRoot(Location terminalRoot) {
+		this.terminalRoot = terminalRoot;
+	}
+
 	public ArrayList<Terminal> getTerminals() {
 		return terminals;
 	}
@@ -27,14 +45,14 @@ public class Axon {
 		this.terminals = terminals;
 	}
 
-	private Location terminalRoot;
+	
 
-	public Axon(Location location) {
+	public Axon(Nerve owner, Location location) {
+		this.setNerve(owner);
+		this.setTerminalRoot(location);
 		
-		this.terminalRoot = location;
-		Space.addLocation(location,this.getTerminals());
-		this.getTerminals().add( new Terminal(location));
-
+		this.getTerminals().add( new Terminal(this, terminalRoot));
+		this.getTerminalRoot().setOccupant(this.getTerminals().get(0));
 	}
 
 	/**
