@@ -115,13 +115,14 @@ public class Nerve {
 			// collect the signals
 			for (int j = 0; j < nerve.dendrites.size(); j++) {
 
-				currentPotential = currentPotential + nerve.dendrites.get(j).getSignal();
+				setCurrentPotential(getCurrentPotential() + nerve.dendrites.get(j).getSignal());
 
 			}
 			// Logger.log(Thread.currentThread() + " " + this + " Accumulated Signal is = " + currentPotential);
 			// propagate the signal via the Axon
-			nerve.axon.stimulate(currentPotential);
-			currentPotential = 0;
+			if (getCurrentPotential() > 0)
+				nerve.axon.stimulate(currentPotential);
+			setCurrentPotential(0);
 		}
 
 	}
