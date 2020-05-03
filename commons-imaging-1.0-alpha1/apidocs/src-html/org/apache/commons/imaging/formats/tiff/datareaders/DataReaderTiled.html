@@ -1,0 +1,310 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * Licensed to the Apache Software Foundation (ASF) under one or more<a name="line.2"></a>
+<span class="sourceLineNo">003</span> * contributor license agreements.  See the NOTICE file distributed with<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * this work for additional information regarding copyright ownership.<a name="line.4"></a>
+<span class="sourceLineNo">005</span> * The ASF licenses this file to You under the Apache License, Version 2.0<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * (the "License"); you may not use this file except in compliance with<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * the License.  You may obtain a copy of the License at<a name="line.7"></a>
+<span class="sourceLineNo">008</span> *<a name="line.8"></a>
+<span class="sourceLineNo">009</span> *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.9"></a>
+<span class="sourceLineNo">010</span> *<a name="line.10"></a>
+<span class="sourceLineNo">011</span> * Unless required by applicable law or agreed to in writing, software<a name="line.11"></a>
+<span class="sourceLineNo">012</span> * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * See the License for the specific language governing permissions and<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * limitations under the License.<a name="line.15"></a>
+<span class="sourceLineNo">016</span> */<a name="line.16"></a>
+<span class="sourceLineNo">017</span>package org.apache.commons.imaging.formats.tiff.datareaders;<a name="line.17"></a>
+<span class="sourceLineNo">018</span><a name="line.18"></a>
+<span class="sourceLineNo">019</span>import java.awt.Rectangle;<a name="line.19"></a>
+<span class="sourceLineNo">020</span>import java.awt.image.BufferedImage;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import java.io.ByteArrayInputStream;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import java.io.IOException;<a name="line.22"></a>
+<span class="sourceLineNo">023</span>import java.nio.ByteOrder;<a name="line.23"></a>
+<span class="sourceLineNo">024</span><a name="line.24"></a>
+<span class="sourceLineNo">025</span>import org.apache.commons.imaging.ImageReadException;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import org.apache.commons.imaging.common.ImageBuilder;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import org.apache.commons.imaging.formats.tiff.TiffDirectory;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import org.apache.commons.imaging.formats.tiff.TiffElement.DataElement;<a name="line.28"></a>
+<span class="sourceLineNo">029</span>import org.apache.commons.imaging.formats.tiff.TiffImageData;<a name="line.29"></a>
+<span class="sourceLineNo">030</span>import org.apache.commons.imaging.formats.tiff.photometricinterpreters.PhotometricInterpreter;<a name="line.30"></a>
+<span class="sourceLineNo">031</span>import org.apache.commons.imaging.formats.tiff.photometricinterpreters.PhotometricInterpreterRgb;<a name="line.31"></a>
+<span class="sourceLineNo">032</span><a name="line.32"></a>
+<span class="sourceLineNo">033</span>public final class DataReaderTiled extends ImageDataReader {<a name="line.33"></a>
+<span class="sourceLineNo">034</span><a name="line.34"></a>
+<span class="sourceLineNo">035</span>    private final int tileWidth;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>    private final int tileLength;<a name="line.36"></a>
+<span class="sourceLineNo">037</span><a name="line.37"></a>
+<span class="sourceLineNo">038</span>    private final int bitsPerPixel;<a name="line.38"></a>
+<span class="sourceLineNo">039</span><a name="line.39"></a>
+<span class="sourceLineNo">040</span>    private final int compression;<a name="line.40"></a>
+<span class="sourceLineNo">041</span>    private final ByteOrder byteOrder;<a name="line.41"></a>
+<span class="sourceLineNo">042</span><a name="line.42"></a>
+<span class="sourceLineNo">043</span>    private final TiffImageData.Tiles imageData;<a name="line.43"></a>
+<span class="sourceLineNo">044</span><a name="line.44"></a>
+<span class="sourceLineNo">045</span>    public DataReaderTiled(final TiffDirectory directory,<a name="line.45"></a>
+<span class="sourceLineNo">046</span>            final PhotometricInterpreter photometricInterpreter, final int tileWidth,<a name="line.46"></a>
+<span class="sourceLineNo">047</span>            final int tileLength, final int bitsPerPixel, final int[] bitsPerSample,<a name="line.47"></a>
+<span class="sourceLineNo">048</span>            final int predictor, final int samplesPerPixel, final int width, final int height,<a name="line.48"></a>
+<span class="sourceLineNo">049</span>            final int compression, final ByteOrder byteOrder, final TiffImageData.Tiles imageData) {<a name="line.49"></a>
+<span class="sourceLineNo">050</span>        super(directory, photometricInterpreter, bitsPerSample, predictor,<a name="line.50"></a>
+<span class="sourceLineNo">051</span>                samplesPerPixel, width, height);<a name="line.51"></a>
+<span class="sourceLineNo">052</span><a name="line.52"></a>
+<span class="sourceLineNo">053</span>        this.tileWidth = tileWidth;<a name="line.53"></a>
+<span class="sourceLineNo">054</span>        this.tileLength = tileLength;<a name="line.54"></a>
+<span class="sourceLineNo">055</span><a name="line.55"></a>
+<span class="sourceLineNo">056</span>        this.bitsPerPixel = bitsPerPixel;<a name="line.56"></a>
+<span class="sourceLineNo">057</span>        this.compression = compression;<a name="line.57"></a>
+<span class="sourceLineNo">058</span><a name="line.58"></a>
+<span class="sourceLineNo">059</span>        this.imageData = imageData;<a name="line.59"></a>
+<span class="sourceLineNo">060</span>        this.byteOrder = byteOrder;<a name="line.60"></a>
+<span class="sourceLineNo">061</span>    }<a name="line.61"></a>
+<span class="sourceLineNo">062</span><a name="line.62"></a>
+<span class="sourceLineNo">063</span>    private void interpretTile(final ImageBuilder imageBuilder, final byte[] bytes,<a name="line.63"></a>
+<span class="sourceLineNo">064</span>            final int startX, final int startY, final int xLimit, final int yLimit) throws ImageReadException, IOException {<a name="line.64"></a>
+<span class="sourceLineNo">065</span>        // changes introduced May 2012<a name="line.65"></a>
+<span class="sourceLineNo">066</span>        // The following block of code implements changes that<a name="line.66"></a>
+<span class="sourceLineNo">067</span>        // reduce image loading time by using special-case processing<a name="line.67"></a>
+<span class="sourceLineNo">068</span>        // instead of the general-purpose logic from the original<a name="line.68"></a>
+<span class="sourceLineNo">069</span>        // implementation. For a detailed discussion, see the comments for<a name="line.69"></a>
+<span class="sourceLineNo">070</span>        // a similar treatment in the DataReaderStrip class<a name="line.70"></a>
+<span class="sourceLineNo">071</span>        //<a name="line.71"></a>
+<span class="sourceLineNo">072</span><a name="line.72"></a>
+<span class="sourceLineNo">073</span>        // verify that all samples are one byte in size<a name="line.73"></a>
+<span class="sourceLineNo">074</span>        final boolean allSamplesAreOneByte = isHomogenous(8);<a name="line.74"></a>
+<span class="sourceLineNo">075</span><a name="line.75"></a>
+<span class="sourceLineNo">076</span>        if (predictor != 2 &amp;&amp; bitsPerPixel == 24 &amp;&amp; allSamplesAreOneByte) {<a name="line.76"></a>
+<span class="sourceLineNo">077</span>            int k = 0;<a name="line.77"></a>
+<span class="sourceLineNo">078</span>            final int i0 = startY;<a name="line.78"></a>
+<span class="sourceLineNo">079</span>            int i1 = startY + tileLength;<a name="line.79"></a>
+<span class="sourceLineNo">080</span>            if (i1 &gt; yLimit) {<a name="line.80"></a>
+<span class="sourceLineNo">081</span>                // the tile is padded past bottom of image<a name="line.81"></a>
+<span class="sourceLineNo">082</span>                i1 = yLimit;<a name="line.82"></a>
+<span class="sourceLineNo">083</span>            }<a name="line.83"></a>
+<span class="sourceLineNo">084</span>            final int j0 = startX;<a name="line.84"></a>
+<span class="sourceLineNo">085</span>            int j1 = startX + tileWidth;<a name="line.85"></a>
+<span class="sourceLineNo">086</span>            if (j1 &gt; xLimit) {<a name="line.86"></a>
+<span class="sourceLineNo">087</span>                // the tile is padded to beyond the tile width<a name="line.87"></a>
+<span class="sourceLineNo">088</span>                j1 = xLimit;<a name="line.88"></a>
+<span class="sourceLineNo">089</span>            }<a name="line.89"></a>
+<span class="sourceLineNo">090</span>            if (photometricInterpreter instanceof PhotometricInterpreterRgb) {<a name="line.90"></a>
+<span class="sourceLineNo">091</span>                for (int i = i0; i &lt; i1; i++) {<a name="line.91"></a>
+<span class="sourceLineNo">092</span>                    k = (i - i0) * tileWidth * 3;<a name="line.92"></a>
+<span class="sourceLineNo">093</span>                    for (int j = j0; j &lt; j1; j++, k += 3) {<a name="line.93"></a>
+<span class="sourceLineNo">094</span>                        final int rgb = 0xff000000<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                                | (((bytes[k] &lt;&lt; 8) | (bytes[k + 1] &amp; 0xff)) &lt;&lt; 8)<a name="line.95"></a>
+<span class="sourceLineNo">096</span>                                | (bytes[k + 2] &amp; 0xff);<a name="line.96"></a>
+<span class="sourceLineNo">097</span>                        imageBuilder.setRGB(j, i, rgb);<a name="line.97"></a>
+<span class="sourceLineNo">098</span>                    }<a name="line.98"></a>
+<span class="sourceLineNo">099</span>                }<a name="line.99"></a>
+<span class="sourceLineNo">100</span>            } else {<a name="line.100"></a>
+<span class="sourceLineNo">101</span>                final int[] samples = new int[3];<a name="line.101"></a>
+<span class="sourceLineNo">102</span>                for (int i = i0; i &lt; i1; i++) {<a name="line.102"></a>
+<span class="sourceLineNo">103</span>                    k = (i - i0) * tileWidth * 3;<a name="line.103"></a>
+<span class="sourceLineNo">104</span>                    for (int j = j0; j &lt; j1; j++) {<a name="line.104"></a>
+<span class="sourceLineNo">105</span>                        samples[0] = bytes[k++] &amp; 0xff;<a name="line.105"></a>
+<span class="sourceLineNo">106</span>                        samples[1] = bytes[k++] &amp; 0xff;<a name="line.106"></a>
+<span class="sourceLineNo">107</span>                        samples[2] = bytes[k++] &amp; 0xff;<a name="line.107"></a>
+<span class="sourceLineNo">108</span>                        photometricInterpreter.interpretPixel(imageBuilder,<a name="line.108"></a>
+<span class="sourceLineNo">109</span>                                samples, j, i);<a name="line.109"></a>
+<span class="sourceLineNo">110</span>                    }<a name="line.110"></a>
+<span class="sourceLineNo">111</span>                }<a name="line.111"></a>
+<span class="sourceLineNo">112</span>            }<a name="line.112"></a>
+<span class="sourceLineNo">113</span>            return;<a name="line.113"></a>
+<span class="sourceLineNo">114</span>        }<a name="line.114"></a>
+<span class="sourceLineNo">115</span><a name="line.115"></a>
+<span class="sourceLineNo">116</span>        // End of May 2012 changes<a name="line.116"></a>
+<span class="sourceLineNo">117</span><a name="line.117"></a>
+<span class="sourceLineNo">118</span>        try (final BitInputStream bis = new BitInputStream(new ByteArrayInputStream(bytes), byteOrder)) {<a name="line.118"></a>
+<span class="sourceLineNo">119</span><a name="line.119"></a>
+<span class="sourceLineNo">120</span>            final int pixelsPerTile = tileWidth * tileLength;<a name="line.120"></a>
+<span class="sourceLineNo">121</span><a name="line.121"></a>
+<span class="sourceLineNo">122</span>            int tileX = 0;<a name="line.122"></a>
+<span class="sourceLineNo">123</span>            int tileY = 0;<a name="line.123"></a>
+<span class="sourceLineNo">124</span><a name="line.124"></a>
+<span class="sourceLineNo">125</span>            int[] samples = new int[bitsPerSampleLength];<a name="line.125"></a>
+<span class="sourceLineNo">126</span>            resetPredictor();<a name="line.126"></a>
+<span class="sourceLineNo">127</span>            for (int i = 0; i &lt; pixelsPerTile; i++) {<a name="line.127"></a>
+<span class="sourceLineNo">128</span><a name="line.128"></a>
+<span class="sourceLineNo">129</span>                final int x = tileX + startX;<a name="line.129"></a>
+<span class="sourceLineNo">130</span>                final int y = tileY + startY;<a name="line.130"></a>
+<span class="sourceLineNo">131</span><a name="line.131"></a>
+<span class="sourceLineNo">132</span>                getSamplesAsBytes(bis, samples);<a name="line.132"></a>
+<span class="sourceLineNo">133</span><a name="line.133"></a>
+<span class="sourceLineNo">134</span>                if ((x &lt; xLimit) &amp;&amp; (y &lt; yLimit)) {<a name="line.134"></a>
+<span class="sourceLineNo">135</span>                    samples = applyPredictor(samples);<a name="line.135"></a>
+<span class="sourceLineNo">136</span>                    photometricInterpreter.interpretPixel(imageBuilder, samples, x, y);<a name="line.136"></a>
+<span class="sourceLineNo">137</span>                }<a name="line.137"></a>
+<span class="sourceLineNo">138</span><a name="line.138"></a>
+<span class="sourceLineNo">139</span>                tileX++;<a name="line.139"></a>
+<span class="sourceLineNo">140</span><a name="line.140"></a>
+<span class="sourceLineNo">141</span>                if (tileX &gt;= tileWidth) {<a name="line.141"></a>
+<span class="sourceLineNo">142</span>                    tileX = 0;<a name="line.142"></a>
+<span class="sourceLineNo">143</span>                    resetPredictor();<a name="line.143"></a>
+<span class="sourceLineNo">144</span>                    tileY++;<a name="line.144"></a>
+<span class="sourceLineNo">145</span>                    bis.flushCache();<a name="line.145"></a>
+<span class="sourceLineNo">146</span>                    if (tileY &gt;= tileLength) {<a name="line.146"></a>
+<span class="sourceLineNo">147</span>                        break;<a name="line.147"></a>
+<span class="sourceLineNo">148</span>                    }<a name="line.148"></a>
+<span class="sourceLineNo">149</span>                }<a name="line.149"></a>
+<span class="sourceLineNo">150</span><a name="line.150"></a>
+<span class="sourceLineNo">151</span>            }<a name="line.151"></a>
+<span class="sourceLineNo">152</span>        }<a name="line.152"></a>
+<span class="sourceLineNo">153</span>    }<a name="line.153"></a>
+<span class="sourceLineNo">154</span><a name="line.154"></a>
+<span class="sourceLineNo">155</span>    @Override<a name="line.155"></a>
+<span class="sourceLineNo">156</span>    public void readImageData(final ImageBuilder imageBuilder)<a name="line.156"></a>
+<span class="sourceLineNo">157</span>            throws ImageReadException, IOException {<a name="line.157"></a>
+<span class="sourceLineNo">158</span>        final int bitsPerRow = tileWidth * bitsPerPixel;<a name="line.158"></a>
+<span class="sourceLineNo">159</span>        final int bytesPerRow = (bitsPerRow + 7) / 8;<a name="line.159"></a>
+<span class="sourceLineNo">160</span>        final int bytesPerTile = bytesPerRow * tileLength;<a name="line.160"></a>
+<span class="sourceLineNo">161</span>        int x = 0;<a name="line.161"></a>
+<span class="sourceLineNo">162</span>        int y = 0;<a name="line.162"></a>
+<span class="sourceLineNo">163</span><a name="line.163"></a>
+<span class="sourceLineNo">164</span>        for (final DataElement tile2 : imageData.tiles) {<a name="line.164"></a>
+<span class="sourceLineNo">165</span>            final byte[] compressed = tile2.getData();<a name="line.165"></a>
+<span class="sourceLineNo">166</span><a name="line.166"></a>
+<span class="sourceLineNo">167</span>            final byte[] decompressed = decompress(compressed, compression,<a name="line.167"></a>
+<span class="sourceLineNo">168</span>                    bytesPerTile, tileWidth, tileLength);<a name="line.168"></a>
+<span class="sourceLineNo">169</span><a name="line.169"></a>
+<span class="sourceLineNo">170</span>            interpretTile(imageBuilder, decompressed, x, y, width, height);<a name="line.170"></a>
+<span class="sourceLineNo">171</span><a name="line.171"></a>
+<span class="sourceLineNo">172</span>            x += tileWidth;<a name="line.172"></a>
+<span class="sourceLineNo">173</span>            if (x &gt;= width) {<a name="line.173"></a>
+<span class="sourceLineNo">174</span>                x = 0;<a name="line.174"></a>
+<span class="sourceLineNo">175</span>                y += tileLength;<a name="line.175"></a>
+<span class="sourceLineNo">176</span>                if (y &gt;= height) {<a name="line.176"></a>
+<span class="sourceLineNo">177</span>                    break;<a name="line.177"></a>
+<span class="sourceLineNo">178</span>                }<a name="line.178"></a>
+<span class="sourceLineNo">179</span>            }<a name="line.179"></a>
+<span class="sourceLineNo">180</span><a name="line.180"></a>
+<span class="sourceLineNo">181</span>        }<a name="line.181"></a>
+<span class="sourceLineNo">182</span>    }<a name="line.182"></a>
+<span class="sourceLineNo">183</span><a name="line.183"></a>
+<span class="sourceLineNo">184</span>    @Override<a name="line.184"></a>
+<span class="sourceLineNo">185</span>    public BufferedImage readImageData(final Rectangle subImage)<a name="line.185"></a>
+<span class="sourceLineNo">186</span>            throws ImageReadException, IOException {<a name="line.186"></a>
+<span class="sourceLineNo">187</span>        final int bitsPerRow = tileWidth * bitsPerPixel;<a name="line.187"></a>
+<span class="sourceLineNo">188</span>        final int bytesPerRow = (bitsPerRow + 7) / 8;<a name="line.188"></a>
+<span class="sourceLineNo">189</span>        final int bytesPerTile = bytesPerRow * tileLength;<a name="line.189"></a>
+<span class="sourceLineNo">190</span>        int x = 0;<a name="line.190"></a>
+<span class="sourceLineNo">191</span>        int y = 0;<a name="line.191"></a>
+<span class="sourceLineNo">192</span><a name="line.192"></a>
+<span class="sourceLineNo">193</span>        // tileWidth is the width of the tile<a name="line.193"></a>
+<span class="sourceLineNo">194</span>        // tileLength is the height of the tile<a name="line.194"></a>
+<span class="sourceLineNo">195</span>        final int col0 = subImage.x / tileWidth;<a name="line.195"></a>
+<span class="sourceLineNo">196</span>        final int col1 = (subImage.x + subImage.width - 1) / tileWidth;<a name="line.196"></a>
+<span class="sourceLineNo">197</span>        final int row0 = subImage.y / tileLength;<a name="line.197"></a>
+<span class="sourceLineNo">198</span>        final int row1 = (subImage.y + subImage.height - 1) / tileLength;<a name="line.198"></a>
+<span class="sourceLineNo">199</span><a name="line.199"></a>
+<span class="sourceLineNo">200</span>        final int nCol = col1 - col0 + 1;<a name="line.200"></a>
+<span class="sourceLineNo">201</span>        final int nRow = row1 - row0 + 1;<a name="line.201"></a>
+<span class="sourceLineNo">202</span>        final int workingWidth = nCol * tileWidth;<a name="line.202"></a>
+<span class="sourceLineNo">203</span>        final int workingHeight = nRow * tileLength;<a name="line.203"></a>
+<span class="sourceLineNo">204</span><a name="line.204"></a>
+<span class="sourceLineNo">205</span>        final int nColumnsOfTiles = (width + tileWidth - 1) / tileWidth;<a name="line.205"></a>
+<span class="sourceLineNo">206</span><a name="line.206"></a>
+<span class="sourceLineNo">207</span>        final int x0 = col0 * tileWidth;<a name="line.207"></a>
+<span class="sourceLineNo">208</span>        final int y0 = row0 * tileLength;<a name="line.208"></a>
+<span class="sourceLineNo">209</span><a name="line.209"></a>
+<span class="sourceLineNo">210</span>        final ImageBuilder workingBuilder =<a name="line.210"></a>
+<span class="sourceLineNo">211</span>                new ImageBuilder(workingWidth, workingHeight, false);<a name="line.211"></a>
+<span class="sourceLineNo">212</span><a name="line.212"></a>
+<span class="sourceLineNo">213</span>        for (int iRow = row0; iRow &lt;= row1; iRow++) {<a name="line.213"></a>
+<span class="sourceLineNo">214</span>            for (int iCol = col0; iCol &lt;= col1; iCol++) {<a name="line.214"></a>
+<span class="sourceLineNo">215</span>                final int tile = iRow * nColumnsOfTiles + iCol;<a name="line.215"></a>
+<span class="sourceLineNo">216</span>                final byte[] compressed = imageData.tiles[tile].getData();<a name="line.216"></a>
+<span class="sourceLineNo">217</span>                final byte[] decompressed = decompress(compressed, compression,<a name="line.217"></a>
+<span class="sourceLineNo">218</span>                        bytesPerTile, tileWidth, tileLength);<a name="line.218"></a>
+<span class="sourceLineNo">219</span>                x = iCol * tileWidth - x0;<a name="line.219"></a>
+<span class="sourceLineNo">220</span>                y = iRow * tileLength - y0;<a name="line.220"></a>
+<span class="sourceLineNo">221</span>                interpretTile(workingBuilder, decompressed, x, y, workingWidth, workingHeight);<a name="line.221"></a>
+<span class="sourceLineNo">222</span>            }<a name="line.222"></a>
+<span class="sourceLineNo">223</span>        }<a name="line.223"></a>
+<span class="sourceLineNo">224</span><a name="line.224"></a>
+<span class="sourceLineNo">225</span>        if (subImage.x == x0<a name="line.225"></a>
+<span class="sourceLineNo">226</span>                &amp;&amp; subImage.y == y0<a name="line.226"></a>
+<span class="sourceLineNo">227</span>                &amp;&amp; subImage.width == workingWidth<a name="line.227"></a>
+<span class="sourceLineNo">228</span>                &amp;&amp; subImage.height == workingHeight) {<a name="line.228"></a>
+<span class="sourceLineNo">229</span>            return workingBuilder.getBufferedImage();<a name="line.229"></a>
+<span class="sourceLineNo">230</span>        }<a name="line.230"></a>
+<span class="sourceLineNo">231</span>        return workingBuilder.getSubimage(<a name="line.231"></a>
+<span class="sourceLineNo">232</span>            subImage.x - x0,<a name="line.232"></a>
+<span class="sourceLineNo">233</span>            subImage.y - y0,<a name="line.233"></a>
+<span class="sourceLineNo">234</span>            subImage.width,<a name="line.234"></a>
+<span class="sourceLineNo">235</span>            subImage.height);<a name="line.235"></a>
+<span class="sourceLineNo">236</span>    }<a name="line.236"></a>
+<span class="sourceLineNo">237</span><a name="line.237"></a>
+<span class="sourceLineNo">238</span>}<a name="line.238"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

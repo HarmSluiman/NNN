@@ -1,0 +1,224 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * Licensed to the Apache Software Foundation (ASF) under one or more<a name="line.2"></a>
+<span class="sourceLineNo">003</span> * contributor license agreements.  See the NOTICE file distributed with<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * this work for additional information regarding copyright ownership.<a name="line.4"></a>
+<span class="sourceLineNo">005</span> * The ASF licenses this file to You under the Apache License, Version 2.0<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * (the "License"); you may not use this file except in compliance with<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * the License.  You may obtain a copy of the License at<a name="line.7"></a>
+<span class="sourceLineNo">008</span> *<a name="line.8"></a>
+<span class="sourceLineNo">009</span> *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.9"></a>
+<span class="sourceLineNo">010</span> *<a name="line.10"></a>
+<span class="sourceLineNo">011</span> * Unless required by applicable law or agreed to in writing, software<a name="line.11"></a>
+<span class="sourceLineNo">012</span> * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * See the License for the specific language governing permissions and<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * limitations under the License.<a name="line.15"></a>
+<span class="sourceLineNo">016</span> */<a name="line.16"></a>
+<span class="sourceLineNo">017</span>package org.apache.commons.imaging.formats.tiff.photometricinterpreters;<a name="line.17"></a>
+<span class="sourceLineNo">018</span><a name="line.18"></a>
+<span class="sourceLineNo">019</span>import java.io.IOException;<a name="line.19"></a>
+<span class="sourceLineNo">020</span><a name="line.20"></a>
+<span class="sourceLineNo">021</span>import org.apache.commons.imaging.ImageReadException;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import org.apache.commons.imaging.common.ImageBuilder;<a name="line.22"></a>
+<span class="sourceLineNo">023</span><a name="line.23"></a>
+<span class="sourceLineNo">024</span>public class PhotometricInterpreterLogLuv extends PhotometricInterpreter {<a name="line.24"></a>
+<span class="sourceLineNo">025</span>    // private final boolean yOnly;<a name="line.25"></a>
+<span class="sourceLineNo">026</span><a name="line.26"></a>
+<span class="sourceLineNo">027</span>    public PhotometricInterpreterLogLuv(final int samplesPerPixel,<a name="line.27"></a>
+<span class="sourceLineNo">028</span>            final int[] bitsPerSample, final int predictor, final int width, final int height) {<a name="line.28"></a>
+<span class="sourceLineNo">029</span>        super(samplesPerPixel, bitsPerSample, predictor, width, height);<a name="line.29"></a>
+<span class="sourceLineNo">030</span><a name="line.30"></a>
+<span class="sourceLineNo">031</span>        // this.yOnly = yonly;<a name="line.31"></a>
+<span class="sourceLineNo">032</span>    }<a name="line.32"></a>
+<span class="sourceLineNo">033</span><a name="line.33"></a>
+<span class="sourceLineNo">034</span>    private float cube(final float f) {<a name="line.34"></a>
+<span class="sourceLineNo">035</span>        return f * f * f;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>    }<a name="line.36"></a>
+<span class="sourceLineNo">037</span><a name="line.37"></a>
+<span class="sourceLineNo">038</span>    // private float function_f(float value, )<a name="line.38"></a>
+<span class="sourceLineNo">039</span><a name="line.39"></a>
+<span class="sourceLineNo">040</span>    @Override<a name="line.40"></a>
+<span class="sourceLineNo">041</span>    public void interpretPixel(final ImageBuilder imageBuilder, final int[] samples, final int x,<a name="line.41"></a>
+<span class="sourceLineNo">042</span>            final int y) throws ImageReadException, IOException {<a name="line.42"></a>
+<span class="sourceLineNo">043</span>        float X, Y, Z;<a name="line.43"></a>
+<span class="sourceLineNo">044</span><a name="line.44"></a>
+<span class="sourceLineNo">045</span>        final int cieL = samples[0];<a name="line.45"></a>
+<span class="sourceLineNo">046</span>        final int cieA = (byte) samples[1];<a name="line.46"></a>
+<span class="sourceLineNo">047</span>        final int cieB = (byte) samples[2];<a name="line.47"></a>
+<span class="sourceLineNo">048</span><a name="line.48"></a>
+<span class="sourceLineNo">049</span>        {<a name="line.49"></a>
+<span class="sourceLineNo">050</span><a name="line.50"></a>
+<span class="sourceLineNo">051</span>            float var_Y = ((cieL * 100.0f / 255.0f) + 16.0f) / 116.0f;<a name="line.51"></a>
+<span class="sourceLineNo">052</span>            float var_X = cieA / 500.0f + var_Y;<a name="line.52"></a>
+<span class="sourceLineNo">053</span>            float var_Z = var_Y - cieB / 200.0f;<a name="line.53"></a>
+<span class="sourceLineNo">054</span><a name="line.54"></a>
+<span class="sourceLineNo">055</span>            final float var_x_cube = cube(var_X);<a name="line.55"></a>
+<span class="sourceLineNo">056</span>            final float var_y_cube = cube(var_Y);<a name="line.56"></a>
+<span class="sourceLineNo">057</span>            final float var_z_cube = cube(var_Z);<a name="line.57"></a>
+<span class="sourceLineNo">058</span><a name="line.58"></a>
+<span class="sourceLineNo">059</span>            if (var_y_cube &gt; 0.008856f) {<a name="line.59"></a>
+<span class="sourceLineNo">060</span>                var_Y = var_y_cube;<a name="line.60"></a>
+<span class="sourceLineNo">061</span>            } else {<a name="line.61"></a>
+<span class="sourceLineNo">062</span>                var_Y = (var_Y - 16 / 116.0f) / 7.787f;<a name="line.62"></a>
+<span class="sourceLineNo">063</span>            }<a name="line.63"></a>
+<span class="sourceLineNo">064</span><a name="line.64"></a>
+<span class="sourceLineNo">065</span>            if (var_x_cube &gt; 0.008856f) {<a name="line.65"></a>
+<span class="sourceLineNo">066</span>                var_X = var_x_cube;<a name="line.66"></a>
+<span class="sourceLineNo">067</span>            } else {<a name="line.67"></a>
+<span class="sourceLineNo">068</span>                var_X = (var_X - 16 / 116.0f) / 7.787f;<a name="line.68"></a>
+<span class="sourceLineNo">069</span>            }<a name="line.69"></a>
+<span class="sourceLineNo">070</span><a name="line.70"></a>
+<span class="sourceLineNo">071</span>            if (var_z_cube &gt; 0.008856f) {<a name="line.71"></a>
+<span class="sourceLineNo">072</span>                var_Z = var_z_cube;<a name="line.72"></a>
+<span class="sourceLineNo">073</span>            } else {<a name="line.73"></a>
+<span class="sourceLineNo">074</span>                var_Z = (var_Z - 16 / 116.0f) / 7.787f;<a name="line.74"></a>
+<span class="sourceLineNo">075</span>            }<a name="line.75"></a>
+<span class="sourceLineNo">076</span><a name="line.76"></a>
+<span class="sourceLineNo">077</span>            final float ref_X = 95.047f;<a name="line.77"></a>
+<span class="sourceLineNo">078</span>            final float ref_Y = 100.000f;<a name="line.78"></a>
+<span class="sourceLineNo">079</span>            final float ref_Z = 108.883f;<a name="line.79"></a>
+<span class="sourceLineNo">080</span><a name="line.80"></a>
+<span class="sourceLineNo">081</span>            X = ref_X * var_X; // ref_X = 95.047 Observer= 2°, Illuminant= D65<a name="line.81"></a>
+<span class="sourceLineNo">082</span>            Y = ref_Y * var_Y; // ref_Y = 100.000<a name="line.82"></a>
+<span class="sourceLineNo">083</span>            Z = ref_Z * var_Z; // ref_Z = 108.883<a name="line.83"></a>
+<span class="sourceLineNo">084</span><a name="line.84"></a>
+<span class="sourceLineNo">085</span>        }<a name="line.85"></a>
+<span class="sourceLineNo">086</span><a name="line.86"></a>
+<span class="sourceLineNo">087</span>        // ref_X = 95.047 //Observer = 2°, Illuminant = D65<a name="line.87"></a>
+<span class="sourceLineNo">088</span>        // ref_Y = 100.000<a name="line.88"></a>
+<span class="sourceLineNo">089</span>        // ref_Z = 108.883<a name="line.89"></a>
+<span class="sourceLineNo">090</span><a name="line.90"></a>
+<span class="sourceLineNo">091</span>        int R, G, B;<a name="line.91"></a>
+<span class="sourceLineNo">092</span>        {<a name="line.92"></a>
+<span class="sourceLineNo">093</span>            final float var_X = X / 100f; // X = From 0 to ref_X<a name="line.93"></a>
+<span class="sourceLineNo">094</span>            final float var_Y = Y / 100f; // Y = From 0 to ref_Y<a name="line.94"></a>
+<span class="sourceLineNo">095</span>            final float var_Z = Z / 100f; // Z = From 0 to ref_Y<a name="line.95"></a>
+<span class="sourceLineNo">096</span><a name="line.96"></a>
+<span class="sourceLineNo">097</span>            float var_R = var_X * 3.2406f + var_Y * -1.5372f + var_Z * -0.4986f;<a name="line.97"></a>
+<span class="sourceLineNo">098</span>            float var_G = var_X * -0.9689f + var_Y * 1.8758f + var_Z * 0.0415f;<a name="line.98"></a>
+<span class="sourceLineNo">099</span>            float var_B = var_X * 0.0557f + var_Y * -0.2040f + var_Z * 1.0570f;<a name="line.99"></a>
+<span class="sourceLineNo">100</span><a name="line.100"></a>
+<span class="sourceLineNo">101</span>            if (var_R &gt; 0.0031308) {<a name="line.101"></a>
+<span class="sourceLineNo">102</span>                var_R = 1.055f * (float) Math.pow(var_R, (1 / 2.4)) - 0.055f;<a name="line.102"></a>
+<span class="sourceLineNo">103</span>            } else {<a name="line.103"></a>
+<span class="sourceLineNo">104</span>                var_R = 12.92f * var_R;<a name="line.104"></a>
+<span class="sourceLineNo">105</span>            }<a name="line.105"></a>
+<span class="sourceLineNo">106</span>            if (var_G &gt; 0.0031308) {<a name="line.106"></a>
+<span class="sourceLineNo">107</span>                var_G = 1.055f * (float) Math.pow(var_G, (1 / 2.4)) - 0.055f;<a name="line.107"></a>
+<span class="sourceLineNo">108</span>            } else {<a name="line.108"></a>
+<span class="sourceLineNo">109</span>                var_G = 12.92f * var_G;<a name="line.109"></a>
+<span class="sourceLineNo">110</span>            }<a name="line.110"></a>
+<span class="sourceLineNo">111</span><a name="line.111"></a>
+<span class="sourceLineNo">112</span>            if (var_B &gt; 0.0031308) {<a name="line.112"></a>
+<span class="sourceLineNo">113</span>                var_B = 1.055f * (float) Math.pow(var_B, (1 / 2.4)) - 0.055f;<a name="line.113"></a>
+<span class="sourceLineNo">114</span>            } else {<a name="line.114"></a>
+<span class="sourceLineNo">115</span>                var_B = 12.92f * var_B;<a name="line.115"></a>
+<span class="sourceLineNo">116</span>            }<a name="line.116"></a>
+<span class="sourceLineNo">117</span><a name="line.117"></a>
+<span class="sourceLineNo">118</span>            // var_R = (((var_R-)))<a name="line.118"></a>
+<span class="sourceLineNo">119</span>            // updateMaxMin(new float[]{<a name="line.119"></a>
+<span class="sourceLineNo">120</span>            // var_R, var_G, var_B,<a name="line.120"></a>
+<span class="sourceLineNo">121</span>            // }, maxVarRGB, minVarRGB);<a name="line.121"></a>
+<span class="sourceLineNo">122</span><a name="line.122"></a>
+<span class="sourceLineNo">123</span>            // var_R = ((var_R + 0.16561039f) / (3.0152583f + 0.16561039f));<a name="line.123"></a>
+<span class="sourceLineNo">124</span>            // var_G = ((var_G + 0.06561642f) / (3.0239854f + 0.06561642f));<a name="line.124"></a>
+<span class="sourceLineNo">125</span>            // var_B = ((var_B + 0.19393992f) / (3.1043448f + 0.19393992f));<a name="line.125"></a>
+<span class="sourceLineNo">126</span><a name="line.126"></a>
+<span class="sourceLineNo">127</span>            R = (int) (var_R * 255f);<a name="line.127"></a>
+<span class="sourceLineNo">128</span>            G = (int) (var_G * 255f);<a name="line.128"></a>
+<span class="sourceLineNo">129</span>            B = (int) (var_B * 255f);<a name="line.129"></a>
+<span class="sourceLineNo">130</span>        }<a name="line.130"></a>
+<span class="sourceLineNo">131</span><a name="line.131"></a>
+<span class="sourceLineNo">132</span>        // float R = 1.910f * X - 0.532f * Y - 0.288f * Z;<a name="line.132"></a>
+<span class="sourceLineNo">133</span>        // float G = -0.985f * X + 1.999f * Y - 0.028f * Z;<a name="line.133"></a>
+<span class="sourceLineNo">134</span>        // float B = 0.058f * X - 0.118f * Y + 0.898f * Z;<a name="line.134"></a>
+<span class="sourceLineNo">135</span><a name="line.135"></a>
+<span class="sourceLineNo">136</span>        // updateMaxMin(new float[]{<a name="line.136"></a>
+<span class="sourceLineNo">137</span>        // R, G, B,<a name="line.137"></a>
+<span class="sourceLineNo">138</span>        // }, maxRGB, minRGB);<a name="line.138"></a>
+<span class="sourceLineNo">139</span><a name="line.139"></a>
+<span class="sourceLineNo">140</span>        int red = R;<a name="line.140"></a>
+<span class="sourceLineNo">141</span>        int green = G;<a name="line.141"></a>
+<span class="sourceLineNo">142</span>        int blue = B;<a name="line.142"></a>
+<span class="sourceLineNo">143</span><a name="line.143"></a>
+<span class="sourceLineNo">144</span>        red = Math.min(255, Math.max(0, red));<a name="line.144"></a>
+<span class="sourceLineNo">145</span>        green = Math.min(255, Math.max(0, green));<a name="line.145"></a>
+<span class="sourceLineNo">146</span>        blue = Math.min(255, Math.max(0, blue));<a name="line.146"></a>
+<span class="sourceLineNo">147</span>        final int alpha = 0xff;<a name="line.147"></a>
+<span class="sourceLineNo">148</span>        final int rgb = (alpha &lt;&lt; 24) | (red &lt;&lt; 16) | (green &lt;&lt; 8) | (blue &lt;&lt; 0);<a name="line.148"></a>
+<span class="sourceLineNo">149</span>        imageBuilder.setRGB(x, y, rgb);<a name="line.149"></a>
+<span class="sourceLineNo">150</span><a name="line.150"></a>
+<span class="sourceLineNo">151</span>    }<a name="line.151"></a>
+<span class="sourceLineNo">152</span>}<a name="line.152"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>
