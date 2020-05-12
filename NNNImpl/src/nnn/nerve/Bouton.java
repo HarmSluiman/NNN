@@ -91,7 +91,8 @@ public class Bouton {
 		ArrayList<Dendrite> dendriteNeighbors =  new ArrayList<Dendrite>() ;
 	
 		
-		dendriteNeighbors = Space.findNeighborDendrites(myLocation);
+		dendriteNeighbors = myLocation.getMySpace().findNeighborDendrites(myLocation);
+		
 		if (!(dendriteNeighbors.isEmpty())){
 			// insert a Synapse if not recursive
 				// check all the neighbors

@@ -6,30 +6,5 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/harmsluiman/Documents/NNN/commons-imaging-1.0-alpha1/commons-imaging-1.0-alpha1-tests.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/Users/harmsluiman/Documents/NNN/commons-imaging-1.0-alpha1/commons-imaging-1.0-alpha1-test-sources.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/Users/harmsluiman/Documents/NNN/commons-imaging-1.0-alpha1/commons-imaging-1.0-alpha1-sources.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/Users/harmsluiman/Documents/NNN/commons-imaging-1.0-alpha1/commons-imaging-1.0-alpha1-javadoc.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/Users/harmsluiman/Documents/NNN/commons-imaging-1.0-alpha1/commons-imaging-1.0-alpha1.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

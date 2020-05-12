@@ -15,6 +15,7 @@ public class Location {
 	private int x_axis = 0;
 	private int y_axis = 0;
 	private int z_axis = 0;
+	private Space mySpace = null;
 	
 	private Object occupant = null;
 	
@@ -44,6 +45,12 @@ public class Location {
 	}
 	
 	
+	public Space getMySpace() {
+		return mySpace;
+	}
+	public void setMySpace(Space mySpace) {
+		this.mySpace = mySpace;
+	}
 	public Location(int x, int y, int z ) {
 		setX_axis(x);
 		setY_axis(y);

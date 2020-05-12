@@ -72,7 +72,7 @@ public class Nerve {
 		this.terminalRootLocation = terminalRootLocation;
 	}
 
-	public Nerve(Location dendriteRoot, Location terminalRoot) {
+	public Nerve(Location dendriteRoot, Location terminalRoot, Space dSpace, Space tSpace) {
 		Dendrite dendrite = new Dendrite(dendriteRoot);
 		this.getDendrites().add(dendrite);
 
@@ -85,8 +85,8 @@ public class Nerve {
 		this.getDendriteRootLocation().setOccupant(dendrite);
 		// this.getTerminalRootLocation().setOccupant(terminal);
 
-		Space.addLocation(dendriteRoot);
-		Space.addLocation(terminalRoot);
+		dSpace.addLocation(dendriteRoot);
+		tSpace.addLocation(terminalRoot);
 		this.propagate();
 
 	}

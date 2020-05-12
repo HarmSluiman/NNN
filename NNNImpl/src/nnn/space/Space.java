@@ -3,6 +3,7 @@
  */
 package nnn.space;
 
+import java.lang.Math;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -33,21 +34,72 @@ import nnn.nerve.Dendrite;
  */
 public class Space {
 
-	private static HashMap<String, Object> space = new HashMap<String, Object>();
-
-	public static void addLocation(Location location) {
+	private  HashMap<String, Object> space = new HashMap<String, Object>();
+	private  int maxX, minX, maxY, minY, maxZ, minZ = 0;
+	
+	public Space() {
+		
+	}
+	
+	
+	public  void addLocation(Location location) {
 		space.put(location.toString(), location.getOccupant());
+		location.setMySpace(this);
+		if (space.size() > 1) {
+			if (location.getX_axis() > maxX)
+				maxX = location.getX_axis();
+			if (location.getX_axis() < minX)
+				minX = location.getX_axis();
+			
+			if (location.getY_axis() > maxY)
+				maxY = location.getY_axis();
+			if (location.getY_axis() < minY)
+				minY = location.getY_axis();
+			
+			if (location.getZ_axis() > maxZ)
+				maxZ = location.getZ_axis();
+			if (location.getZ_axis() < minZ)
+				minZ = location.getZ_axis();
+		} else {
+			maxX = minX = location.getX_axis();
+			maxY = minY = location.getY_axis();
+			maxZ = minZ = location.getZ_axis();
+		}
+			
+		
+	}
+	public int getXRangeSize() {
+		return Math.abs(maxX) + Math.abs(minX);
+	}
+	public int getYRangeSize() {
+		return Math.abs(maxY) + Math.abs(minY);
+	}
+	public int getZRangeSize() {
+		return Math.abs(maxZ) + Math.abs(minZ);
+	}
+	public HashMap<String, Object>  getLocationHash() {
+		return this.space;
+	}
+	public int getMinX() {
+		return minX;
+	}
+	public int getMinY() {
+		return minY;
+	}
+	public int getMinZ() {
+		return minZ;
 	}
 
-	public static void dumpLocations() {
 
-		for (String l : space.keySet()) {
-			Logger.log("     Location: " + l + "  Object " + space.get(l));
+	public void dumpLocations() {
+
+		for (String l : getLocationHash().keySet()) {
+			Logger.log("     Location: " + l + "  Object " + getLocationHash().get(l));
 		}
 
 	}
 
-	public static ArrayList<Dendrite> findNeighborDendrites(Location center) {
+	public  ArrayList<Dendrite> findNeighborDendrites(Location center) {
 	    ArrayList<Dendrite> dendrites =  new ArrayList<Dendrite>() ;
 		
 		boolean looking = true;

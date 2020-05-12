@@ -7,16 +7,31 @@ public class Test {
 
 	public static void main(String[] args) {
 		System.out.println("starting");
-		Nerve nerve01 = new Nerve (new Location(10,10,30), new Location(10,10,25));
-		Nerve nerve02 = new Nerve (new Location(10,10,24), new Location(10,10,20));
-		Nerve nerve03 = new Nerve (new Location(10,10,19), new Location(10,10,15));
-		Nerve nerve04 = new Nerve (new Location(10,10,14), new Location(10,10,10));
-		Nerve nerve05 = new Nerve (new Location(10,10,9), new Location(10,50,10));
-		Nerve nerve06 = new Nerve (new Location(10,50,11), new Location(10,30,15));
-		Nerve nerve07 = new Nerve (new Location(10,30,14), new Location(10,-10,10));
-		Nerve nerve08 = new Nerve (new Location(10,-10,9), new Location(10,-20,10));
-		Nerve nerve09 = new Nerve (new Location(10,-20,9), new Location(-110,1,10));
-		Nerve nerve10 = new Nerve (new Location(-110,1,10), new Location(0,0,0));
+		Space dSpace = new Space();
+		Space tSpace = dSpace;
+		
+		// fake a 200 by 200 by 200 nerve space for test viewing
+		@SuppressWarnings("unused")
+		Nerve nerve1 = new Nerve (new Location(100,100,100), new Location(100,100,-100), dSpace, tSpace);
+		@SuppressWarnings("unused")
+		Nerve nerve2 = new Nerve (new Location(-100,100,100), new Location(-100,100,-100), dSpace, tSpace);
+		@SuppressWarnings("unused")
+		Nerve nerve3 = new Nerve (new Location(100,-100,100), new Location(100,-100,-100), dSpace, tSpace);
+		@SuppressWarnings("unused")
+		Nerve nerve4 = new Nerve (new Location(100,-100,100), new Location(-100,-100,-100), dSpace, tSpace);
+		
+		
+		
+		
+		Nerve nerve01 = new Nerve (new Location(10,10,30), new Location(10,10,25), dSpace, tSpace);
+		Nerve nerve02 = new Nerve (new Location(10,10,24), new Location(10,10,20), dSpace, tSpace);
+		Nerve nerve03 = new Nerve (new Location(10,10,19), new Location(10,10,15), dSpace, tSpace);
+		Nerve nerve04 = new Nerve (new Location(10,10,14), new Location(10,10,10), dSpace ,tSpace);
+		Nerve nerve05 = new Nerve (new Location(10,10,9), new Location(10,50,10), dSpace, tSpace);
+		Nerve nerve06 = new Nerve (new Location(10,50,11), new Location(10,30,15), dSpace, tSpace);
+		Nerve nerve07 = new Nerve (new Location(10,30,14), new Location(10,-10,10), dSpace, tSpace);
+		Nerve nerve08 = new Nerve (new Location(10,-10,9), new Location(10,-20,10), dSpace, tSpace);
+		
 		System.out.println("first stimulation 1.0");
 		nerve01.getDendrites().get(0).stimulate(1);
 
@@ -86,8 +101,7 @@ public class Test {
 		nerve06.atrophy();
 		nerve07.atrophy();
 		nerve08.atrophy();
-		nerve09.atrophy();
-		nerve10.atrophy();
+		
 
 		//Space.dumpLocations();
 	}

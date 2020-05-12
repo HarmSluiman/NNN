@@ -6,4 +6,6 @@
  *
  */
 module nnn {
+	
+	requires java.desktop; 
 }
